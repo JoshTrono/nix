@@ -10,11 +10,10 @@
     }:
     {
 
-nixpkgs.config.permittedInsecurePackages = [
-┃                 "immich-2.7.5"
-┃               ];
+      nixpkgs.config.permittedInsecurePackages = [
+        "immich-2.7.5"
+      ];
 
-      
       services.immich.enable = true;
       services.immich.port = 2283;
 
