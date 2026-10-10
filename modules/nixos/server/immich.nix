@@ -9,8 +9,10 @@
       ...
     }:
     {
-
-# services.immich.package = pkgs.unstable.immich;
+      nixpkgs.config.permittedInsecurePackages = [
+        "immich-2.7.5"
+      ];
+      # services.immich.package = pkgs.unstable.immich;
 
       services.immich.enable = true;
       services.immich.port = 2283;
