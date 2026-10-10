@@ -19,6 +19,7 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    ./dotnet.nix
   ];
 
   nixpkgs = {
@@ -45,6 +46,9 @@
       allowUnfree = true;
     };
   };
+
+  
+
 
   # TODO: Set your username
   home = {

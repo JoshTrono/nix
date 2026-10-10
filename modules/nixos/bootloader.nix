@@ -11,7 +11,6 @@ flake.modules.nixos.bootloader = { config, lib, pkgs, ... }: {
 
       extraConfig = ''
         timeout: 3
-        remember_last_entry: yes
         term_font_scale: 2x2
       '';
 
