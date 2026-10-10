@@ -83,6 +83,8 @@ in
     ];
   };
 
+  
+
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
@@ -118,7 +120,7 @@ in
       PermitRootLogin = "no";
       # Opinionated: use keys only.
       # Remove if you want to SSH using passwords
-      PasswordAuthentication = false;
+      PasswordAuthentication = true;
     };
   };
 
