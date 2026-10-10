@@ -16,7 +16,6 @@ in
   imports = [
     # Modules exported by your own flake (from modules/)
     nixos.nh
-    nixos.programs
     # nixos.netbird
     # Or modules from other flakes (such as nixos-hardware):
     inputs.hardware.nixosModules.common-cpu-amd
@@ -53,6 +52,13 @@ in
       allowUnfree = true;
     };
   };
+
+
+  #Temp
+  environment.systemPackages = with pkgs; [
+
+      ];
+      programs.git.enable = true;
 
   nix = {
     settings = {
