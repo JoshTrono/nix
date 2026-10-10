@@ -17,7 +17,7 @@ in
     # Modules exported by your own flake (from modules/)
     nixos.nh
     nixos.immich
-    # nixos.netbird
+    nixos.netbird
     # Or modules from other flakes (such as nixos-hardware):
     inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
@@ -115,9 +115,10 @@ in
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" "networkmanager" "netbird-wt0" ];
     };
   };
+services.netbird.useRoutingFeatures = "both";
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.

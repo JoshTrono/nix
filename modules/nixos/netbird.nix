@@ -2,7 +2,7 @@
 
   flake.modules.nixos.netbird = { pkgs, vars, ... }: {
     services.netbird = {
-      package = pkgs.unstable.netbird;
+      package = pkgs.netbird;
       # ui.package = pkgs.unstable.netbird-ui;
 
       clients.wt0 = {
@@ -28,7 +28,6 @@
         port = 51821;
 
         # Set this to true if you want the GUI client
-        ui.enable = false;
 
         # This opens ports required for direct connection without a relay
         openFirewall = true;
