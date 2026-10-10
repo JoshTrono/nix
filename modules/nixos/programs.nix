@@ -1,12 +1,10 @@
 {
   flake.modules.nixos.programs =
-    { pkgs, ... }:
+    { pkgs, inputs ,... }:
     {
-
+    imports = [inputs.nix-index-database.nixosModules.default];
     # --- Nixpkgs Configuration ---
-    nixpkgs.config.permittedInsecurePackages = [
-      "electron-41.10.7"
-    ];
+
 
 
 
@@ -19,7 +17,8 @@
         grayjay
         brave
         discord
-        opencode-desktop
+        # nix-index
+        kdePackages.filelight
       ];
       programs.firefox.enable = true;
       programs.git.enable = true;

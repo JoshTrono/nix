@@ -7,6 +7,7 @@ in
 {
   home.packages = [
     dotnet
+    pkgs.android-tools
     pkgs.jetbrains.rider
   ];
 

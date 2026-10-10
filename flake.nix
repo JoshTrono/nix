@@ -23,8 +23,12 @@
     import-tree.url = "github:vic/import-tree";
     systems.url = "github:nix-systems/default-linux";
 
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
-        # --- Multiverse (Pull Any Published Package) ---
+    #AI
+    opencode.url = "github:anomalyco/opencode";
+    # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
   };
 
@@ -83,7 +87,10 @@
           nixosConfigurations = {
             # FIXME replace with your hostname
             Zeus = inputs.nixpkgs.lib.nixosSystem {
-              specialArgs = { inherit inputs; vars = hosts.Zeus; };
+              specialArgs = {
+                inherit inputs;
+                vars = hosts.Zeus;
+              };
               modules = [
                 # > Our main nixos configuration file <
                 ./nixos/Zeus/configuration.nix
@@ -91,15 +98,16 @@
             };
 
             Server = inputs.nixpkgs.lib.nixosSystem {
-              specialArgs = { inherit inputs; vars = hosts.Server; };
+              specialArgs = {
+                inherit inputs;
+                vars = hosts.Server;
+              };
               modules = [
                 # > Our main nixos configuration file <
                 ./nixos/Server/configuration.nix
               ];
             };
           };
-
-          
 
           # Standalone home-manager configuration entrypoint
           # Available through 'home-manager --flake .#your-username@your-hostname'
@@ -108,7 +116,10 @@
             "${hosts.Zeus.username}@${hosts.Zeus.hostname}" = home-manager.lib.homeManagerConfiguration {
               # Home-manager requires 'pkgs' instance
               pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; # FIXME replace x86_64-linux with your architecture
-              extraSpecialArgs = { inherit inputs; vars = hosts.Zeus; };
+              extraSpecialArgs = {
+                inherit inputs;
+                vars = hosts.Zeus;
+              };
               modules = [
                 # > Our main home-manager configuration file <
                 ./home-manager/home.nix
