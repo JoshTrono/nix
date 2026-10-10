@@ -16,6 +16,7 @@ in
   imports = [
     # Modules exported by your own flake (from modules/)
     nixos.nh
+    nixos.immich
     # nixos.netbird
     # Or modules from other flakes (such as nixos-hardware):
     inputs.hardware.nixosModules.common-cpu-amd
