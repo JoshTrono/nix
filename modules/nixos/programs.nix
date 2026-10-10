@@ -17,6 +17,7 @@
         grayjay
         brave
         discord
+        immich-go
         # nix-index
         kdePackages.filelight
       ];
