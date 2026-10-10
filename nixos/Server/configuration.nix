@@ -51,8 +51,12 @@ in
     config = {
       # Disable if you don't want unfree packages
       allowUnfree = true;
+      permittedInsecurePackages = [
+┃                 "immich-2.7.5"
+      ];
     };
   };
+
 
 
   #Temp
