@@ -72,8 +72,6 @@ in
     channel.enable = false;
   };
 
-
-
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
@@ -96,7 +94,11 @@ in
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = [ "wheel" "networkmanager" "netbird-wt0" ];
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "netbird-wt0"
+      ];
     };
   };
   services.netbird.ui.enable = true;
@@ -112,7 +114,20 @@ in
       PasswordAuthentication = false;
     };
   };
+  # Printing
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
 
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      cups-filters
+      cups-browsed
+    ];
+  };
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.11";
 }

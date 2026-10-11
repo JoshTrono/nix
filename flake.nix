@@ -30,6 +30,11 @@
     opencode.url = "github:anomalyco/opencode";
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
+
+
+
+    #LTS
+    nixpkgs-lts.url = "https://channels.cyberus-linux.com/channel/cyberus-linux-26.05.tar.xz";
   };
 
   outputs =
@@ -97,7 +102,7 @@
               ];
             };
 
-            Server = inputs.nixpkgs.lib.nixosSystem {
+            Server = inputs.nixpkgs-lts.lib.nixosSystem {
               specialArgs = {
                 inherit inputs;
                 vars = hosts.Server;

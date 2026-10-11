@@ -41,6 +41,7 @@
     hardware.xone.enable = true;
     hardware.xpadneo.enable = true;
     environment.systemPackages = with pkgs; [
+      prismlauncher
       (unstable.bottles.override { removeWarningPopup = true; })
     ];
   };
