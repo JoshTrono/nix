@@ -19,6 +19,7 @@
         discord
         immich-go
         jellyfin-desktop
+        filezilla
         # nix-index
         kdePackages.filelight
       ];

@@ -20,7 +20,7 @@
           NB_ENABLE_ROSENPASS = "true";
         };
 
-        port = 51821;
+        port = 51820;
         openFirewall = true;
         openInternalFirewall = true;
       };
