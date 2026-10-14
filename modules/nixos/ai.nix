@@ -7,7 +7,7 @@
       ...
     }:
     {
-      imports = [ inputs.nix-amd-ai.nixosModules.default ];
+      # imports = [ inputs.nix-amd-ai.nixosModules.default ];
 
       services.ollama = {
         enable = true;
@@ -25,7 +25,7 @@
 
       environment.systemPackages = [
         pkgs.opencode
-        inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.opencode-desktop
+        pkgs.unstable.opencode-desktop
       ];
 
       environment.etc."opencode/opencode.json".text = builtins.toJSON {
