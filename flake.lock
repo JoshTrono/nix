@@ -127,18 +127,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-lts": {
-      "locked": {
-        "lastModified": 315532800,
-        "narHash": "sha256-ZvT31aPXXA6JJQcDFFGzRQtdQ9PsAyvUQK1wya6oSWM=",
-        "type": "tarball",
-        "url": "https://channels.ctrl-os.com/permanent/ctrlos-9660f7b6bbf5c7912d97a710b19c7d9060a7ab22.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.cyberus-linux.com/channel/cyberus-linux-26.05.tar.xz"
-      }
-    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1791734076,
@@ -164,7 +152,6 @@
         "multiverse": "multiverse",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-lts": "nixpkgs-lts",
         "nixpkgs-unstable": "nixpkgs-unstable"
       }
     }
