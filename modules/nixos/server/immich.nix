@@ -10,8 +10,8 @@
       };
     in
     {
-      disabledModules = [ "services/web-apps/immich.nix" ];
-      imports = [ "${inputs.nixpkgs}/nixos/modules/services/web-apps/immich.nix" ];
+      # disabledModules = [ "services/web-apps/immich.nix" ];
+      # imports = [ "${inputs.nixpkgs}/nixos/modules/services/web-apps/immich.nix" ];
 
       services.immich = {
         enable = true;

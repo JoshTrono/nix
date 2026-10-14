@@ -15,7 +15,11 @@
         # pkgs.multiverse.tip                      -> newest indexed revision
         # pkgs.multiverse.versions.python3."3.8.9" -> a single package at an exact version
         # pkgs.multiverse.versionsOf "python3"     -> list every version ever indexed
-        multiverse = inputs.multiverse.multiverse.${final.stdenv.hostPlatform.system};
+        multiverse = inputs.multiverse.lib.mkMultiverse {
+          system = final.stdenv.hostPlatform.system;
+          config.allowUnfree = true;
+          # overlays = [ ];  # optional: applied to every revision too
+        };
       })
     ];
   };

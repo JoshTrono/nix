@@ -57,8 +57,9 @@ in
     };
   };
 
-
-
+boot.swraid.mdadmConf = ''
+  MAILADDR root
+'';
   #Temp
   environment.systemPackages = with pkgs; [
 
