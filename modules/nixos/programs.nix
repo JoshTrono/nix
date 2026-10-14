@@ -18,6 +18,7 @@
         brave
         discord
         immich-go
+        jellyfin-desktop
         # nix-index
         kdePackages.filelight
       ];
