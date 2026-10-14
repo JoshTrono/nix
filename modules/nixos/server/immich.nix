@@ -1,23 +1,25 @@
-# /.dotfiles/modules/bootloader.nix
-# Limine bootloader config.
+# /.dotfiles/modules/immich.nix
+{ inputs, ... }:
 {
   flake.modules.nixos.immich =
+    { pkgs, ... }:
+    let
+      stable = import inputs.nixpkgs {
+        system = pkgs.stdenv.hostPlatform.system;
+        config.permittedInsecurePackages = [ "immich-2.7.5" ];
+      };
+    in
     {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
-    {
-      nixpkgs.config.permittedInsecurePackages = [
-        "immich-2.7.5"
-      ];
-      # services.immich.package = pkgs.unstable.immich;
+      disabledModules = [ "services/web-apps/immich.nix" ];
+      imports = [ "${inputs.nixpkgs}/nixos/modules/services/web-apps/immich.nix" ];
 
-      services.immich.enable = true;
-      services.immich.port = 2283;
-      services.immich.host = "0.0.0.0";
-      services.immich.openFirewall = true;
-      services.immich.mediaLocation = "/mnt/mainlibrary/immich";
+      services.immich = {
+        enable = true;
+        package = stable.immich;
+        port = 2283;
+        host = "0.0.0.0";
+        openFirewall = true;
+        mediaLocation = "/mnt/mainlibrary/immich";
+      };
     };
 }
