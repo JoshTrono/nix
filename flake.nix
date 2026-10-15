@@ -27,7 +27,6 @@
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
-
     #LTS - for server once 26.05 no longer is supported
     #nixpkgs-lts.url = "https://channels.cyberus-linux.com/channel/cyberus-linux-26.05.tar.xz";
   };
@@ -58,14 +57,19 @@
 
         # Per-system outputs. 'pkgs' here is nixpkgs.legacyPackages.${system}.
         perSystem =
-          { pkgs, ... }:
+          { system, ... }:
+          let
+            pkgs = import inputs.nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          in
           {
-            # Your custom packages
-            # Accessible through 'nix build', 'nix shell', etc
+            # Makes 'pkgs' unfree-enabled for everything else in perSystem too
+            _module.args.pkgs = pkgs;
+
             packages = import ./pkgs pkgs;
 
-            # Formatter for your nix files, available through 'nix fmt'
-            # Other options beside 'alejandra' include 'nixpkgs-fmt'
             formatter = pkgs.alejandra;
           };
 

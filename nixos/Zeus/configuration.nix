@@ -25,6 +25,7 @@ in
     nixos.vm
     nixos.ai
     nixos.netbird
+    nixos.netextender
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
@@ -71,7 +72,7 @@ in
     # Opinionated: disable channels
     channel.enable = false;
   };
-
+  services.netextender.enable = true;
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
@@ -128,6 +129,11 @@ in
       cups-browsed
     ];
   };
+
+  programs.bash.interactiveShellInit = ''
+    [ -f "$HOME/.config/work-aliases.sh" ] && . "$HOME/.config/work-aliases.sh"
+  '';
+
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.11";
 }

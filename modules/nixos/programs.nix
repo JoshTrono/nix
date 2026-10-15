@@ -20,6 +20,8 @@
         immich-go
         jellyfin-desktop
         filezilla
+        netextender
+        freerdp
         # nix-index
         kdePackages.filelight
       ];
