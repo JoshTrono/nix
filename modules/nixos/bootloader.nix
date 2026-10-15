@@ -1,34 +1,34 @@
 # /.dotfiles/modules/bootloader.nix
-# Limine bootloader config.
+# Lanzaboote (Secure Boot on systemd-boot) + Plymouth.
+{ inputs, ... }:
 {
-flake.modules.nixos.bootloader = { config, lib, pkgs, ... }: {
+  flake.modules.nixos.bootloader = { config, lib, pkgs, ... }: {
+    imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
+
     boot.loader.efi.canTouchEfiVariables = true;
+    boot.loader.timeout = 5;
 
-    boot.loader.limine = {
+    # Lanzaboote takes over from the systemd-boot module
+    boot.loader.systemd-boot.enable = lib.mkForce false;
+
+    boot.lanzaboote = {
       enable = true;
-      validateChecksums = true;
-      maxGenerations = 10;
-
-      extraConfig = ''
-        timeout: 3
-        term_font_scale: 2x2
-      '';
-
-      style = {
-        wallpapers = [ ./assets/boot_wallpaper.png ];
-        wallpaperStyle = "centered";
-      };
+      pkiBundle = "/var/lib/sbctl";
+      configurationLimit = 10;
     };
+
+    environment.systemPackages = [ pkgs.sbctl ];
+
+    # TPM support: systemd-based initrd is needed for TPM2 LUKS unlock
+    security.tpm2.enable = true;
+    boot.initrd.systemd.enable = true;
 
     boot.plymouth = {
       enable = true;
-
-      #---Rings Theme
-      theme = "rings"; # pick any theme you like from https://github.com/adi1090x/plymouth-themes
+      theme = "rings";
       themePackages = with pkgs; [
         (adi1090x-plymouth-themes.override { selected_themes = [ "rings" ]; })
       ];
-
     };
     boot.consoleLogLevel = 0;
     boot.initrd.verbose = false;
@@ -40,5 +40,5 @@ flake.modules.nixos.bootloader = { config, lib, pkgs, ... }: {
     ];
 
     boot.tmp.cleanOnBoot = true;
-};
+  };
 }

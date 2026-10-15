@@ -72,7 +72,6 @@ stdenv.mkDerivation (finalAttrs: {
     description = "SonicWall NetExtender Enterprise VPN Client";
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     license = lib.licenses.unfree;
-    maintainers = [ lib.maintainers.JacoMalan1 ];
     mainProgram = "NetExtender";
   };
 })

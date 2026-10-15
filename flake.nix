@@ -24,6 +24,12 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    # -- for secure boot
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
