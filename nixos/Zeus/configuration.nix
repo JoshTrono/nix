@@ -75,6 +75,13 @@ in
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
 
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 32 * 1024; # 32 GiB
+    }
+  ];
+
   # TODO: Set your hostname
   networking.hostName = "${vars.hostname}";
 

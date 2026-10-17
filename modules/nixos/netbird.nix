@@ -3,12 +3,12 @@
   flake.modules.nixos.netbird = { pkgs, vars, ... }: {
 
     # Replace the stable netbird module with the one from unstable
-    disabledModules = [ "services/networking/netbird.nix" ];
-    imports = [ "${inputs.nixpkgs-unstable}/nixos/modules/services/networking/netbird.nix" ];
+    # disabledModules = [ "services/networking/netbird.nix" ];
+    # imports = [ "${inputs.nixpkgs-unstable}/nixos/modules/services/networking/netbird.nix" ];
 
     services.netbird = {
-      package = pkgs.unstable.netbird;
-      ui.package = pkgs.unstable.netbird-ui;
+      # package = pkgs.unstable.netbird;
+      # ui.package = pkgs.unstable.netbird-ui;
 
       clients.wt0 = {
         login = {

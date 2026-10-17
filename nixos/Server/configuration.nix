@@ -62,7 +62,7 @@ boot.swraid.mdadmConf = ''
 '';
   #Temp
   environment.systemPackages = with pkgs; [
-
+    fastfetch
       ];
       programs.git.enable = true;
 

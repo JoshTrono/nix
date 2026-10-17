@@ -19,6 +19,7 @@
         dig.dnsutils
         netextender
         openconnect
+        fastfetch
 
         sbctl # for secure boot
 

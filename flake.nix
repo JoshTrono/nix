@@ -34,7 +34,7 @@
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
     #LTS - for server once 26.05 no longer is supported
-    #nixpkgs-lts.url = "https://channels.cyberus-linux.com/channel/cyberus-linux-26.05.tar.xz";
+    nixpkgs-lts.url = "https://channels.cyberus-linux.com/channel/cyberus-linux-26.05.tar.xz";
   };
 
   outputs =
@@ -107,7 +107,7 @@
               ];
             };
 
-            Server = inputs.nixpkgs.lib.nixosSystem {
+            Server = inputs.nixpkgs-lts.lib.nixosSystem {
               specialArgs = {
                 inherit inputs;
                 vars = hosts.Server;
