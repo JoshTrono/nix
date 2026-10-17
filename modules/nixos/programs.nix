@@ -10,20 +10,18 @@
         flatpak
         nixfmt
         direnv
-        vulnix
-        grayjay
         brave
         discord
-        immich-go
         jellyfin-desktop
         filezilla
-        netextender
         freerdp
         epic-games
+        dig.dnsutils
+        netextender
+        openconnect
 
         sbctl # for secure boot
 
-        # nix-index
         kdePackages.filelight
       ];
       programs.firefox.enable = true;

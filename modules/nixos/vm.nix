@@ -42,6 +42,7 @@
               swtpm.enable = true;   # TPM 2.0 for Windows 11 guests in virt-manager
             };
           };
+          security.tpm2.enable = true;
 
           programs.virt-manager.enable = true;
 

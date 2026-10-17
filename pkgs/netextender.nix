@@ -1,77 +1,105 @@
-{
-  fetchurl,
-  dpkg,
-  autoPatchelfHook,
-  wrapGAppsHook3,
-  gtk3,
-  gtk2,
-  webkitgtk_4_1,
-  glib-networking,
-  gsettings-desktop-schemas,
-  adwaita-icon-theme,
-  stdenv,
-  lib,
-  makeWrapper,
-  iproute2,
+{ lib
+, stdenv
+, fetchurl
+, autoPatchelfHook
+, makeWrapper
+, wrapGAppsHook3
+, ppp
+, openssl
+, zlib
+, glib
+, glib-networking
+, gsettings-desktop-schemas
+, adwaita-icon-theme
+, gtk3
+, cairo
+, pango
+, gdk-pixbuf
+, libsoup_3
+, webkitgtk_4_1
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+stdenv.mkDerivation rec {
   pname = "netextender";
   version = "10.3.6-39";
 
   src = fetchurl {
-    url = "https://software.sonicwall.com/NetExtender/NetExtender-linux-amd64-${finalAttrs.version}.deb";
-    hash = "sha256-Ls+YcAYU6EQnpZWrQO+zZG4+UFb2kb8HY6u1IHWXQJU=";
+    url = "https://software.sonicwall.com/NetExtender/NetExtender-linux-amd64-${version}.tar.gz";
+    hash = "sha256-wstYzDlALsXgihi1enP/EMoxMBes4G6nvwTZOIwbg1c=";
   };
 
-  nativeBuildInputs = [
-    dpkg
-    autoPatchelfHook
-    makeWrapper
-    wrapGAppsHook3
-  ];
+  # The 10.3 tarball unpacks into a single "netextender/" directory.
+  sourceRoot = "netextender";
 
+  nativeBuildInputs = [ autoPatchelfHook makeWrapper wrapGAppsHook3 ];
   buildInputs = [
+    stdenv.cc.cc.lib
+    openssl
+    zlib
+    glib
     gtk3
-    gtk2 # drop if the build doesn't need it
+    cairo
+    pango
+    gdk-pixbuf
+    libsoup_3
     webkitgtk_4_1
+    # GTK/WebKit runtime pieces: TLS for WebKit, GSettings schemas, icon theme.
     glib-networking
     gsettings-desktop-schemas
     adwaita-icon-theme
   ];
 
-  # only wrap the GUI binary with the GApps env; NEService is a daemon
+  dontBuild = true;
+
+  # We build the GUI wrapper ourselves in preFixup so it gets both the GTK
+  # environment (gappsWrapperArgs) and ppp on PATH.
   dontWrapGApps = true;
 
+  # Mirrors what the vendor install.sh does, minus everything that writes
+  # outside the store (that part lives in the NixOS module):
+  #  - keep the webkit 4.1 GUI, installed under the name "NetExtender"
+  #  - drop the webkit 4.0 variants and the auto-upgrader
+  #  - keep the whole tree under $out/opt/netextender, because the daemon
+  #    expects wg, wg-quick, wireguard-go etc. next to it
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/share/{netextender,applications}
-    mkdir $out/bin
+    mkdir -p $out/opt/netextender $out/bin $out/share/applications
+    cp -r . $out/opt/netextender
+    cd $out/opt/netextender
+    mv NetExtender_webkit2_41 NetExtender
+    rm -f NetExtender_webkit2_40 autoUpgrader_* upgrade.sh install.sh uninstall.sh
+    patchShebangs .
+    cd - > /dev/null
 
-    mv usr/local/netextender/locales $out/share/netextender
-    # copy any other assets the GUI needs (icon, etc.)
-    cp usr/local/netextender/*.png $out/share/netextender/ 2>/dev/null || true
-    mv usr/local/netextender/{NEService,nxcli,wg,wg-quick,wireguard-go} $out/bin
-    mv usr/local/netextender/com.sonicwall.NetExtender.desktop $out/share/applications
-    mv usr/local/netextender/NetExtender_webkit2_41 $out/bin/NetExtender
+    makeWrapper $out/opt/netextender/nxcli $out/bin/nxcli \
+      --prefix PATH : ${lib.makeBinPath [ ppp ]}
+    ln -s nxcli $out/bin/netExtender
 
-    sed -i "s,Icon=/usr/local/netextender/nx-icon.png,Icon=$out/share/netextender/nx-icon.png,g" $out/share/applications/com.sonicwall.NetExtender.desktop
-    sed -i "s,Exec=/usr/local/netextender/NetExtender,Exec=$out/bin/NetExtender,g" $out/share/applications/com.sonicwall.NetExtender.desktop
+    # Point the menu entry at the wrapped GUI and a real icon path, instead
+    # of the vendor's /usr/local/netextender locations.
+    install -Dm644 com.sonicwall.NetExtender.desktop -t $out/share/applications
+    sed -i \
+      -e "s|^Exec=.*|Exec=$out/bin/NetExtender|" \
+      -e "s|^Icon=.*|Icon=$out/opt/netextender/nx-icon.png|" \
+      $out/share/applications/com.sonicwall.NetExtender.desktop
 
     runHook postInstall
   '';
 
-  postFixup = ''
-    wrapGApp $out/bin/NetExtender
-    wrapProgram $out/bin/NEService --prefix PATH : "${lib.makeBinPath [ iproute2 ]}"
+  # If the window is blank or garbled (common with WebKitGTK on NVIDIA or
+  # Wayland), add this line to the makeWrapper call below:
+  #   --set WEBKIT_DISABLE_DMABUF_RENDERER 1 \
+  preFixup = ''
+    makeWrapper $out/opt/netextender/NetExtender $out/bin/NetExtender \
+      "''${gappsWrapperArgs[@]}" \
+      --prefix PATH : ${lib.makeBinPath [ ppp ]}
   '';
 
   meta = {
+    description = "SonicWall NetExtender VPN client";
     homepage = "https://www.sonicwall.com";
-    description = "SonicWall NetExtender Enterprise VPN Client";
-    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     license = lib.licenses.unfree;
-    mainProgram = "NetExtender";
+    platforms = [ "x86_64-linux" ];
   };
-})
+}

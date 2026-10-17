@@ -2,6 +2,6 @@
 # You can build them using 'nix build .#example'
 pkgs: {
   # example = pkgs.callPackage ./example { };
-  netextender = pkgs.callPackage ./netextender.nix {};
   epic-games = pkgs.callPackage ./epicgames.nix {};
+  netextender = pkgs.callPackage ./netextender.nix {};
 }

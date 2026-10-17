@@ -61,7 +61,6 @@ in
       allowUnfree = true;
     };
   };
-
   nix = {
     settings = {
       # Enable flakes and new 'nix' command
@@ -72,7 +71,6 @@ in
     # Opinionated: disable channels
     channel.enable = false;
   };
-  services.netextender.enable = true;
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
