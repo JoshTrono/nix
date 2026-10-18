@@ -43,12 +43,12 @@
       hardware.xpadneo.enable = true;
       environment.systemPackages = with pkgs; [
         prismlauncher
-        (lutris.override {
-          # List of additional system libraries
-          extraLibraries = pkgs: [ ];
-
-          # List of additional system packages
-          extraPkgs = pkgs: [ ];
+        (heroic.override {
+          extraPkgs =
+            pkgs': with pkgs'; [
+              gamescope
+              gamemode
+            ];
         })
       ];
       hardware.graphics.enable32Bit = true;

@@ -25,6 +25,7 @@
         openInternalFirewall = true;
       };
     };
+    services.netbird.useRoutingFeatures = "both";
 
     services.resolved.enable = true;
   };

@@ -33,6 +33,17 @@
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
+    #For the server
+    nixpkgs-small.url = "github:nixos/nixpkgs/nixos-26.05-small";
+    home-manager-small = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs-small";
+    };
+
+    nix-index-database-small = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs-small";
+    };
   };
 
   outputs =
@@ -105,9 +116,13 @@
               ];
             };
 
-            Server = inputs.nixpkgs.lib.nixosSystem {
+            Server = inputs.nixpkgs-small.lib.nixosSystem {
               specialArgs = {
-                inherit inputs;
+                inputs = inputs // {
+                  nixpkgs = inputs.nixpkgs-small;
+                  home-manager = inputs.home-manager-small;
+                  nix-index-database = inputs.nix-index-database-small;
+                };
                 vars = hosts.Server;
               };
               modules = [
