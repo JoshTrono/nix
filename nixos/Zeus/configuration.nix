@@ -29,7 +29,7 @@ in
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
-    inputs.hardware.nixosModules.framework-16-7040-amd
+    inputs.hardware.nixosModules.framework-16-amd-ai-300-series
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
 
@@ -64,7 +64,10 @@ in
   nix = {
     settings = {
       # Enable flakes and new 'nix' command
-      experimental-features = "nix-command flakes";
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       # Opinionated: disable global registry
       flake-registry = "";
     };
@@ -74,7 +77,7 @@ in
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
-
+  networking.networkmanager.wifi.powersave = false;
   swapDevices = [
     {
       device = "/var/lib/swapfile";
@@ -134,7 +137,16 @@ in
       cups-browsed
     ];
   };
-
+  system.autoUpgrade = {
+    enable = true;
+    flake = "/home/${vars.username}/.dotfiles";
+    flags = [
+      "--print-build-logs"
+      "--commit-lock-file" # If you want to automatically commit the updated flake.lock
+    ];
+    dates = "02:00";
+    randomizedDelaySec = "45min";
+  };
   programs.bash.interactiveShellInit = ''
     [ -f "$HOME/.config/work-aliases.sh" ] && . "$HOME/.config/work-aliases.sh"
   '';

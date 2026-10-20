@@ -57,14 +57,18 @@ in
     };
   };
 
-boot.swraid.mdadmConf = ''
-  MAILADDR root
-'';
+  boot.swraid.mdadmConf = ''
+    MAILADDR root
+  '';
   #Temp
   environment.systemPackages = with pkgs; [
     fastfetch
-      ];
-      programs.git.enable = true;
+    gh
+  ];
+  programs.git = {
+    enable = true;
+    config.safe.directory = [ "/home/${vars.username}/.dotfiles" ];
+  };
 
   nix = {
     settings = {
@@ -95,8 +99,6 @@ boot.swraid.mdadmConf = ''
     ];
   };
 
-  
-
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager.enable = true;
@@ -120,10 +122,14 @@ boot.swraid.mdadmConf = ''
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = [ "wheel" "networkmanager" "netbird-wt0" ];
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "netbird-wt0"
+      ];
     };
   };
-services.netbird.useRoutingFeatures = "both";
+  services.netbird.useRoutingFeatures = "both";
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
@@ -136,6 +142,15 @@ services.netbird.useRoutingFeatures = "both";
       # Remove if you want to SSH using passwords
       PasswordAuthentication = true;
     };
+  };
+
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:joshtrono/nix";
+    flags = [ "--print-build-logs" ];
+    dates = "02:00";
+    randomizedDelaySec = "45min";
+    # operation = "boot";  # optional: apply at next reboot instead of switching live
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
