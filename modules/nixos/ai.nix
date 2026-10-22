@@ -7,24 +7,28 @@
       ...
     }:
     {
+      imports = [ inputs.nix-amd-ai.nixosModules.default ];
+      environment.systemPackages = with pkgs; [
+        gaia
+      ];
 
-      services.ollama = {
+      hardware.amd-npu = {
         enable = true;
-        package = pkgs.ollama-rocm;
-        loadModels = [  ];
-        environmentVariables = {
-          # long contexts eat VRAM; lower this if the model spills to CPU
-          OLLAMA_CONTEXT_LENGTH = "16384";
-        };
+        enableNPU = true; # default; set false for GPU-only hosts (see "Other hardware")
+        enableFastFlowLM = true; # LLM inference on NPU (requires enableNPU)
+        # fastflowlm.package = pkgs.fastflowlm;  # swap in an flm-compatible runtime (see below)
+        enableLemonade = true; # OpenAI-compatible API server
+        enableROCm = true; # ROCm GPU backends (llamacpp + sd-cpp)
+        enableVulkan = true; # Vulkan GPU backends (llamacpp + whispercpp)
+        enableImageGen = true; # default true; set false to drop sd-cpp from closure
+        # rocmGpuTargets = ["gfx1103"];  # only to reach a GPU the shipped
+        #                                # gfx1150+gfx1151 build doesn't cover
+        lemonade.user = "${vars.username}";
       };
 
-      # nixpkgs.config.permittedInsecurePackages = [
-      #   "electron-41.10.7"
-      # ];
-
-      environment.systemPackages = with pkgs; [
-        lmstudio
-
+      users.users."${vars.username}".extraGroups = [
+        "video"
+        "render"
       ];
 
     };

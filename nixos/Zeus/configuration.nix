@@ -75,7 +75,7 @@ in
     channel.enable = false;
   };
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
   swapDevices = [

@@ -26,6 +26,7 @@
         enable = true;
         capSysNice = true;
       };
+      
 
       # --- Gaming: Gamemode ---
       programs.gamemode = {

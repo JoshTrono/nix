@@ -31,7 +31,6 @@
         flatpak
         nixfmt
         direnv
-        brave
         discord
         jellyfin-desktop
         filezilla
@@ -41,8 +40,6 @@
         openconnect
         fastfetch
         libreoffice
-        chromium
-        google-chrome
         logseq
 
         epicPkgs.epic-games-launcher
@@ -57,38 +54,7 @@
 
       services.flatpak.enable = true;
       services.packagekit.enable = false;
-      # --- Brave Settings ---
-      programs.chromium = {
-        extraOpts = {
-          BraveWalletDisabled = true;
-          BraveNewsDisabled = true;
-          BraveTalkDisabled = true;
-          BraveAIChatEnabled = false;
-          BraveRewardsDisabled = true;
-          BraveVPNDisabled = true;
-          MetricsReportingEnabled = false;
-          BraveStatsPingEnabled = false;
-          BraveWebDiscoveryEnabled = false;
-        };
-      };
-      programs.chromium = {
-        enable = true;
-        homepageLocation = "https://www.startpage.com/";
-        extensions = [
-          "eimadpbcbfnmbkopoojfekhnkhdbieeh;https://clients2.google.com/service/update2/crx" # dark reader
-          "aapbdbdomjkkjkaonfhkkikfgjllcleb;https://clients2.google.com/service/update2/crx" # google translate
-        ];
-        extraOpts = {
-          "WebAppInstallForceList" = [
-            {
-              "custom_name" = "Youtube";
-              "create_desktop_shortcut" = false;
-              "default_launch_container" = "window";
-              "url" = "https://youtube.com";
-            }
-          ];
-        };
-      };
+     
       # --- AppImage support ---
       programs.appimage = {
         enable = true;

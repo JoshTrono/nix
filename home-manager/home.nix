@@ -19,7 +19,7 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-    #./dotnet.nix
+    ./dotnet.nix
   ];
 
   nixpkgs = {
@@ -46,9 +46,16 @@
       allowUnfree = true;
     };
   };
-
-  
-
+  programs.mangohud = {
+    enable = true;
+    enableSessionWide = true; # load into every Vulkan/OpenGL app, no wrapper needed
+    settings = {
+      cpu_stats = true;
+      cpu_power = true;
+      gpu_stats = true;
+      gpu_power = true;
+    };
+  };
 
   # TODO: Set your username
   home = {
