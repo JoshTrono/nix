@@ -1,8 +1,7 @@
+{ config, lib, pkgs, ... }:
 {
-  flake.modules.nixos.jellyfin = {
-    services.jellyfin = {
-      enable = true;
-      openFirewall = true;
-    };
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
   };
 }

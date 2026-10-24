@@ -1,10 +1,19 @@
-# Add your reusable NixOS modules to this directory, on their own file (https://nixos.wiki/wiki/Module).
-# These should be stuff you would like to share with others, not your personal configurations.
 {
-  # List your module files here
-  # my-module = import ./my-module.nix;
-  # de = import ./de.nix;
-  # common = import ./common.nix;
-  # nh = import ./nh.nix;
-
+  base = ./base.nix;
+  ai = ./ai.nix;
+  vm = ./vm.nix;
+  steam = ./steam.nix;
+  server = {
+    immich = ./server/immich.nix;
+    jellyfin = ./server/jellyfin.nix;
+    forgejo = ./server/forgejo.nix;
+  };
+  bootloader = ./bootloader.nix;
+  netextender = ./netextender.nix;
+  netbird = ./netbird.nix;
+  de = ./de.nix;
+  nix-caches = ./nix-caches.nix;
+  programs = ./programs.nix;
+  nh = ./nh.nix;
+  multiverse = ./multiverse.nix;
 }

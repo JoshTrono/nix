@@ -1,5 +1,5 @@
 {
-  description = "Your new nix config";
+  description = "Joshua's NixOS configuration";
 
   inputs = {
     # Nixpkgs
@@ -37,7 +37,7 @@
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
-    #For the server
+    # For the server - keep nixpkgs-small for server-specific packages
     nixpkgs-small.url = "github:nixos/nixpkgs/nixos-26.05-small";
     home-manager-small = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -59,10 +59,11 @@
       in
       {
         imports = [
-          # Provides the 'flake.modules.<class>.<name>' option
-          flake-parts.flakeModules.modules
-          # Loads every .nix file under ./modules as a flake-parts module
-          (inputs.import-tree ./modules)
+           # Provides the 'flake.modules.<class>.<name>' option
+           flake-parts.flakeModules.modules
+           # Loads every .nix file under ./flake-modules as a flake-parts module
+           (inputs.import-tree ./flake-modules)
+
         ];
 
         # Supported systems for your flake packages, shell, etc.
@@ -107,52 +108,51 @@
 
           # NixOS configuration entrypoint
           # Available through 'nixos-rebuild --flake .#your-hostname'
-          nixosConfigurations = {
-            # FIXME replace with your hostname
-            Zeus = inputs.nixpkgs.lib.nixosSystem {
-              specialArgs = {
-                inherit inputs;
-                vars = hosts.Zeus;
-              };
-              modules = [
-                # > Our main nixos configuration file <
-                ./nixos/Zeus/configuration.nix
-              ];
-            };
+           nixosConfigurations = {
+             # Desktop system
+             Zeus = inputs.nixpkgs.lib.nixosSystem {
+               specialArgs = {
+                 inherit inputs;
+                 vars = hosts.Zeus;
+               };
+               modules = [
+                 ./hosts/zeus/nixos.nix
+               ];
+             };
 
-            Server = inputs.nixpkgs-small.lib.nixosSystem {
-              specialArgs = {
-                inputs = inputs // {
-                  nixpkgs = inputs.nixpkgs-small;
-                  home-manager = inputs.home-manager-small;
-                  nix-index-database = inputs.nix-index-database-small;
-                };
-                vars = hosts.Server;
-              };
-              modules = [
-                # > Our main nixos configuration file <
-                ./nixos/Server/configuration.nix
-              ];
-            };
-          };
+             # Server system - using nixpkgs-small for better compatibility
+             Server = inputs.nixpkgs-small.lib.nixosSystem {
+               specialArgs = {
+                 inputs = inputs // {
+                   nixpkgs = inputs.nixpkgs-small;
+                   home-manager = inputs.home-manager-small;
+                   nix-index-database = inputs.nix-index-database-small;
+                 };
+                 vars = hosts.Server;
+               };
+               modules = [
+                 ./hosts/server/nixos.nix
+               ];
+             };
+           };
 
-          # Standalone home-manager configuration entrypoint
-          # Available through 'home-manager --flake .#your-username@your-hostname'
-          homeConfigurations = {
-            # FIXME replace with your username@hostname
-            "${hosts.Zeus.username}@${hosts.Zeus.hostname}" = home-manager.lib.homeManagerConfiguration {
-              # Home-manager requires 'pkgs' instance
-              pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; # FIXME replace x86_64-linux with your architecture
-              extraSpecialArgs = {
-                inherit inputs;
-                vars = hosts.Zeus;
-              };
-              modules = [
-                # > Our main home-manager configuration file <
-                ./home-manager/home.nix
-              ];
-            };
-          };
+           # Standalone home-manager configuration entrypoint
+           # Available through 'home-manager --flake .#your-username@your-hostname'
+           homeConfigurations = {
+             # Desktop user configuration
+             "${hosts.Zeus.username}@${hosts.Zeus.hostname}" = home-manager.lib.homeManagerConfiguration {
+               # Home-manager requires 'pkgs' instance
+               pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux; # Use x86_64-linux for desktop
+               extraSpecialArgs = {
+                 inherit inputs;
+                 vars = hosts.Zeus;
+               };
+               modules = [
+                 ./hosts/zeus/home-manager.nix
+               ];
+             };
+           };
+
         };
       }
     );

@@ -1,32 +1,22 @@
-{ inputs, ... }: # <- flake-parts args, add this
+{ config, lib, pkgs, vars, ... }:
 {
-  flake.modules.nixos.netbird = { pkgs, vars, ... }: {
-
-    # Replace the stable netbird module with the one from unstable
-    # disabledModules = [ "services/networking/netbird.nix" ];
-    # imports = [ "${inputs.nixpkgs-unstable}/nixos/modules/services/networking/netbird.nix" ];
-
-    services.netbird = {
-      # package = pkgs.unstable.netbird;
-      # ui.package = pkgs.unstable.netbird-ui;
-
-      clients.wt0 = {
-        login = {
-          enable = true;
-          setupKeyFile = "/home/${vars.username}/netbird-key";
-        };
-
-        environment = {
-          NB_ENABLE_ROSENPASS = "true";
-        };
-
-        port = 51820;
-        openFirewall = true;
-        openInternalFirewall = true;
+  services.netbird = {
+    clients.wt0 = {
+      login = {
+        enable = true;
+        setupKeyFile = "/home/${vars.username}/netbird-key";
       };
-    };
-    services.netbird.useRoutingFeatures = "both";
 
-    services.resolved.enable = true;
+      environment = {
+        NB_ENABLE_ROSENPASS = "true";
+      };
+
+      port = 51820;
+      openFirewall = true;
+      openInternalFirewall = true;
+    };
   };
+  services.netbird.useRoutingFeatures = "both";
+
+  services.resolved.enable = true;
 }
