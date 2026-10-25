@@ -46,7 +46,6 @@
 
         kdePackages.filelight
       ];
-      programs.firefox.enable = true;
       programs.git = {
         enable = true;
         config.safe.directory = [ "/home/${vars.username}/.dotfiles" ];

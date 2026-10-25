@@ -3,20 +3,14 @@
 { inputs, ... }:
 {
   flake.modules.nixos.bootloader = { config, lib, pkgs, ... }: {
-    imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
 
     boot.loader.efi.canTouchEfiVariables = true;
     boot.loader.timeout = 5;
 
-    # Lanzaboote takes over from the systemd-boot module
-    boot.loader.systemd-boot.enable = lib.mkForce false;
-
-    boot.lanzaboote = {
-      enable = true;
-      pkiBundle = "/var/lib/sbctl";
-      configurationLimit = 10;
-    };
-
+boot.loader.limine = {
+  enable = true;
+  secureBoot.enable = true;
+};
     environment.systemPackages = [ pkgs.sbctl ];
 
     # TPM support: systemd-based initrd is needed for TPM2 LUKS unlock

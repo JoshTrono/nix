@@ -9,13 +9,13 @@
     {
       imports = [ inputs.nix-amd-ai.nixosModules.default ];
       environment.systemPackages = with pkgs; [
-        gaia
+        
       ];
 
       hardware.amd-npu = {
         enable = true;
-        enableNPU = true; # default; set false for GPU-only hosts (see "Other hardware")
-        enableFastFlowLM = true; # LLM inference on NPU (requires enableNPU)
+        enableNPU = false; # default; set false for GPU-only hosts (see "Other hardware")
+        enableFastFlowLM = false; # LLM inference on NPU (requires enableNPU)
         # fastflowlm.package = pkgs.fastflowlm;  # swap in an flm-compatible runtime (see below)
         enableLemonade = true; # OpenAI-compatible API server
         enableROCm = true; # ROCm GPU backends (llamacpp + sd-cpp)

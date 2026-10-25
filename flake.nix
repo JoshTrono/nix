@@ -28,26 +28,9 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
-    # -- for secure boot
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.1.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
-    #For the server
-    nixpkgs-small.url = "github:nixos/nixpkgs/nixos-26.05-small";
-    home-manager-small = {
-      url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs-small";
-    };
-
-    nix-index-database-small = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs-small";
-    };
   };
 
   outputs =
@@ -67,11 +50,7 @@
 
         # Supported systems for your flake packages, shell, etc.
         systems = [
-          "aarch64-linux"
-          "i686-linux"
           "x86_64-linux"
-          "aarch64-darwin"
-          "x86_64-darwin"
         ];
 
         # Per-system outputs. 'pkgs' here is nixpkgs.legacyPackages.${system}.
@@ -120,13 +99,14 @@
               ];
             };
 
-            Server = inputs.nixpkgs-small.lib.nixosSystem {
+            Server = inputs.nixpkgs.lib.nixosSystem {
               specialArgs = {
-                inputs = inputs // {
-                  nixpkgs = inputs.nixpkgs-small;
-                  home-manager = inputs.home-manager-small;
-                  nix-index-database = inputs.nix-index-database-small;
-                };
+                # inputs = inputs // {
+                #   nixpkgs = inputs.nixpkgs-small;
+                #   home-manager = inputs.home-manager-small;
+                #   nix-index-database = inputs.nix-index-database-small;
+                # };
+                inherit inputs;
                 vars = hosts.Server;
               };
               modules = [
