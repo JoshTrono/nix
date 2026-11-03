@@ -7,18 +7,6 @@
       vars,
       ...
     }:
-    let
-      epicPkgs =
-        import
-          (builtins.fetchTarball {
-            url = "https://github.com/no-mood/nixpkgs/archive/27d65d5b8af9bbd5e40906d8757ff1d1fa87ac14.tar.gz";
-            sha256 = "sha256:0wqrxf1nr3is6cv39gbr7lj5j1y0ikckvki4ma6c6kmdk3cqlpcg";
-          })
-          {
-            system = pkgs.stdenv.hostPlatform.system;
-            config.allowUnfree = true;
-          };
-    in
     {
       imports = [ inputs.nix-index-database.nixosModules.default ];
       # --- Nixpkgs Configuration ---
@@ -41,8 +29,6 @@
         fastfetch
         libreoffice
         logseq
-
-        epicPkgs.epic-games-launcher
 
         kdePackages.filelight
       ];
