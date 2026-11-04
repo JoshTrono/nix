@@ -9,7 +9,8 @@
     {
       imports = [ inputs.nix-amd-ai.nixosModules.default ];
       environment.systemPackages = with pkgs; [
-        
+        gaia
+        uv
       ];
 
       hardware.amd-npu = {

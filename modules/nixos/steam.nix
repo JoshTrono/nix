@@ -44,7 +44,7 @@
       hardware.xpadneo.enable = true;
       environment.systemPackages = with pkgs; [
         prismlauncher
-        (heroic.override {
+        (unstable.heroic.override {
           extraPkgs =
             pkgs': with pkgs'; [
               gamescope
