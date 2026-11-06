@@ -88,6 +88,12 @@ in
   # TODO: Set your hostname
   networking.hostName = "${vars.hostname}";
 
+  nix.registry.dots.to = {
+    type = "github";
+    owner = "joshtrono";
+    repo = "nix-templates";
+  };
+
   time.timeZone = "America/New_York";
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.

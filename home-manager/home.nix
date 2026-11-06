@@ -8,25 +8,6 @@
   vars,
   ...
 }:
-let
-  # "Latest version" download link on addons.mozilla.org for force-installed extensions
-  moz = short: "https://addons.mozilla.org/firefox/downloads/latest/${short}/latest.xpi";
-
-  nixIcon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-
-  # Keyword search engine helper: nixSearch "@alias" "https://...{searchTerms}"
-  nixSearch = alias: template: {
-    urls = [ { inherit template; } ];
-    icon = nixIcon;
-    definedAliases = [ alias ];
-  };
-
-  # Extra uBlock Origin lists: imported AND enabled (see selectedFilterLists below)
-  importedLists = [
-    "https://filters.adtidy.org/extension/ublock/filters/3.txt"
-    "https://github.com/DandelionSprout/adfilt/raw/master/LegitimateURLShortener.txt"
-  ];
-in
 {
   # You can import other home-manager modules here
   imports = [
@@ -38,8 +19,9 @@ in
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-    ./dotnet.nix
+    # ./dotnet.nix
     # ./gnome.nix
+    ./firefox.nix
   ];
 
   nixpkgs = {
@@ -79,6 +61,7 @@ in
 
   home.packages = with pkgs; [
     jetbrains.pycharm
+    jetbrains.rider
   ];
 
   # TODO: Set your username

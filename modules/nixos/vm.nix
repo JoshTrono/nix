@@ -19,6 +19,7 @@
       users.users."${vars.username}".extraGroups = [ "libvirtd" ];
       environment.systemPackages = with pkgs; [
         dnsmasq
+        docker-compose
       ];
       networking.firewall.trustedInterfaces = [ "virbr0" ];
       # home.pointerCursor = {

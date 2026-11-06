@@ -4,7 +4,10 @@
   inputs = {
     # Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-
+    brave = {
+      url = "git+https://codeberg.org/buckley310/brave-browser-nix?ref=main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -34,7 +37,12 @@
   };
 
   outputs =
-    inputs@{ flake-parts, home-manager, ... }:
+    inputs@{
+      flake-parts,
+      home-manager,
+      brave,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } (
       { self, ... }:
       let
@@ -95,6 +103,7 @@
               };
               modules = [
                 # > Our main nixos configuration file <
+                brave.nixosModules.default
                 ./nixos/Zeus/configuration.nix
               ];
             };

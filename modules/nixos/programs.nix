@@ -22,19 +22,13 @@
         freerdp
         dig
 
+        kdePackages.kmines
 
         filezilla
         netextender
         fastfetch
         unstable.devenv
         google-chrome
-        (brave.override {
-          commandLineArgs = builtins.concatStringsSep " " [
-            "--ozone-platform-hint=auto" # native Wayland, falls back to X11
-            "--enable-features=AcceleratedVideoDecodeLinuxGL,AcceleratedVideoEncoder,WaylandWindowDecorations"
-            # NVIDIA only (with nvidia-vaapi-driver), add VaapiOnNvidiaGPUs to the list above
-          ];
-        })
 
         libreoffice
         logseq
@@ -44,53 +38,31 @@
         nix-direnv.enable = true;
       };
 
+      #OBS
+      programs.obs-studio = {
+        enableVirtualCamera = true;
+        enable = true;
+
+        # optional Nvidia hardware acceleration
+        package = (
+          pkgs.obs-studio.override {
+            cudaSupport = true;
+          }
+        );
+
+        plugins = with pkgs.obs-studio-plugins; [
+          wlrobs
+          obs-backgroundremoval
+          obs-pipewire-audio-capture
+          obs-vaapi # optional AMD hardware acceleration
+          obs-gstreamer
+          obs-vkcapture
+        ];
+      };
+
       programs.git = {
         enable = true;
         config.safe.directory = [ "/home/${vars.username}/.dotfiles" ];
-      };
-      environment.etc."brave/policies/managed/nix.json".text = builtins.toJSON {
-        # Brave-specific nagging/bloat
-        BraveRewardsDisabled = true;
-        BraveWalletDisabled = true;
-        BraveVPNDisabled = true;
-        BraveAIChatEnabled = false;
-        BraveNewsDisabled = true;
-        BraveTalkDisabled = true;
-        TorDisabled = false;
-
-        # Telemetry / misc
-        MetricsReportingEnabled = false;
-        SafeBrowsingExtendedReportingEnabled = false;
-        UrlKeyedAnonymizedDataCollectionEnabled = false;
-        FeedbackSurveysEnabled = false;
-        PasswordManagerEnabled = false; # Bitwarden handles it
-        AutofillCreditCardEnabled = false;
-        BrowserSignin = 0;
-        SyncDisabled = true;
-        BuiltInDnsClientEnabled = false;
-        DefaultBrowserSettingEnabled = false;
-        PromotionsEnabled = false;
-        HardwareAccelerationModeEnabled = true;
-        DownloadDirectory = "/home/${vars.username}/Downloads";
-        ShowHomeButton = false;
-
-        # Search
-        DefaultSearchProviderEnabled = true;
-        DefaultSearchProviderName = "DuckDuckGo";
-        DefaultSearchProviderKeyword = "ddg";
-        DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
-        SearchSuggestEnabled = false;
-
-        # Extensions: block everything except the allowlist
-        ExtensionInstallBlocklist = [ "*" ];
-        ExtensionInstallAllowlist = [
-          "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
-          "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin (see note below)
-        ];
-        ExtensionInstallForcelist = [
-          "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx"
-          "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
-        ];
       };
 
       services.flatpak.enable = true;
