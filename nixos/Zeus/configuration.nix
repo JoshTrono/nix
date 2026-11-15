@@ -84,7 +84,7 @@ in
       size = 32 * 1024; # 32 GiB
     }
   ];
-
+  
   # TODO: Set your hostname
   networking.hostName = "${vars.hostname}";
 

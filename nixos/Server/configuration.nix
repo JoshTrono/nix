@@ -28,8 +28,9 @@ in
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
 
-    # Import your generated (nixos-generate-config) hardware configuration
-    ./hardware-configuration.nix
+    # Hardware/filesystem config is added per flake output (see flake.nix):
+    #   Server     -> ./hardware-configuration.nix (existing single-disk install)
+    #   ServerRaid -> ./hardware-raid.nix + ./disko.nix (RAID 1 install)
   ];
 
   nixpkgs = {
@@ -146,7 +147,7 @@ in
 
   system.autoUpgrade = {
     enable = true;
-    flake = "github:joshtrono/nix";
+    flake = "github:joshtrono/nix#${vars.flakeAttr or vars.hostname}";
     flags = [ "--print-build-logs" ];
     dates = "02:00";
     randomizedDelaySec = "45min";
