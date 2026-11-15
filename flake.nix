@@ -28,6 +28,10 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Declarative disk partitioning (used by the Server RAID 1 install)
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
@@ -116,6 +120,22 @@
               modules = [
                 # > Our main nixos configuration file <
                 ./nixos/Server/configuration.nix
+                ./nixos/Server/hardware-configuration.nix
+              ];
+            };
+
+            # Same server, but installed onto two disks in RAID 1 (see nixos/Server/disko.nix).
+            # Install with: disko-install --flake .#ServerRaid --disk one <dev1> --disk two <dev2>
+            ServerRaid = inputs.nixpkgs.lib.nixosSystem {
+              specialArgs = {
+                inherit inputs;
+                vars = hosts.ServerRaid;
+              };
+              modules = [
+                inputs.disko.nixosModules.disko
+                ./nixos/Server/configuration.nix
+                ./nixos/Server/hardware-raid.nix
+                ./nixos/Server/disko.nix
               ];
             };
           };
