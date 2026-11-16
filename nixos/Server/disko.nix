@@ -30,7 +30,7 @@
               };
             };
             raid = {
-              size = "100%";
+              size = "200G";
               content = {
                 type = "mdraid";
                 name = "root";
@@ -56,7 +56,7 @@
               };
             };
             raid = {
-              size = "100%";
+              size = "200G";
               content = {
                 type = "mdraid";
                 name = "root";
