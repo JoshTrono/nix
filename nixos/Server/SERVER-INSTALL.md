@@ -40,34 +40,39 @@ ls nixos/Server        # must list disko.nix and hardware-raid.nix
 
 If `disko.nix` is missing you are in the wrong directory or have an old clone.
 
-## 2. Set the disks in `disko.nix`
+## 2. Choose the disks and RAID size
 
-The checked-in file has placeholders and `size = "100%"`. Replace them
-(edit the IDs if the disks changed):
+`disko.nix` takes two arguments, `disks` (a list of two device paths) and
+`raidSize`, with defaults for the real server (the two by-id paths above and
+`230G`). Run disko on the file (not with `--flake`) to override them:
 
-```bash
-sed -i \
-  -e 's|CHANGE-ME-DISK-1|ata-WDC_WDS250G2B0B_19435B803332|' \
-  -e 's|CHANGE-ME-DISK-2|ata-SPCC_Solid_State_Disk_AA000000000000001163|' \
-  -e 's|size = "100%";|size = "230G";|' \
-  nixos/Server/disko.nix
+- Real server: use the defaults, nothing to pass. To use other disks add
+  `--arg disks '[ "/dev/disk/by-id/<disk-1>" "/dev/disk/by-id/<disk-2>" ]'`.
+- VM test (two 20G virtio disks): `--arg disks '[ "/dev/vda" "/dev/vdb" ]' --argstr raidSize 15G`.
 
-grep -nE 'device = |size = ' nixos/Server/disko.nix
-# expect: the two /dev/disk/by-id/ata-... paths, then sizes 1G, 230G, 1G, 230G
-```
-
-(If you commit these values to the repo, you can skip this step next time.)
+`raidSize` must fit on the smaller disk and is the same on both so mdadm does
+not ask its size-mismatch question.
 
 ## 3. Create the RAID 1 array and mount it
 
+Real server:
+
 ```bash
 sudo nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko/latest -- \
-  --mode destroy,format,mount --flake .#ServerRaid --yes-wipe-all-disks
+  --mode destroy,format,mount --yes-wipe-all-disks ./nixos/Server/disko.nix
 ```
 
-Do not pass `--disk`. This disko command does not have that option (only
-`disko-install` does). Do not pipe `yes` into it either; disko answers the one
-`mdadm` question it needs to itself.
+VM test:
+
+```bash
+sudo nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko/latest -- \
+  --mode destroy,format,mount --yes-wipe-all-disks ./nixos/Server/disko.nix \
+  --arg disks '[ "/dev/vda" "/dev/vdb" ]' --argstr raidSize 15G
+```
+
+Do not use `--disk` or `--flake` here; `--disk` is only for `disko-install`.
+The installed system refers to `/dev/md/root` and partition labels, so the paths
+and sizes passed here do not have to match anything in the flake.
 
 Verify:
 
@@ -139,8 +144,8 @@ GRUB is installed to both ESPs (`mirroredBoots` in
 ## 7. After the first boot
 
 - Check the array: `cat /proc/mdstat` (should show `[UU]`).
-- Commit `nixos/Server/hardware-raid.nix` and the `disko.nix` disk values back to
-  GitHub so the repo matches the machine. Nightly auto-upgrade follows
+- Commit `nixos/Server/hardware-raid.nix` back to GitHub so the repo matches the
+  machine. Nightly auto-upgrade follows
   `github:joshtrono/nix#ServerRaid`.
 
 ## Troubleshooting
@@ -149,7 +154,7 @@ GRUB is installed to both ESPs (`mirroredBoots` in
 |---------|-------------|
 | `sed: can't read nixos/Server/disko.nix` | Wrong directory or stale clone. `cd` into the repo; `git pull`. |
 | disko prints its usage text | An option it does not know, usually `--disk`. Use the exact command in step 3. |
-| `mdadm: largest drive exceeds size ... Continue creating array [y/N]` then `create aborted` | RAID partitions are not equal size. Use fixed `size = "230G"` on both (step 2). |
+| `mdadm: largest drive exceeds size ... Continue creating array [y/N]` then `create aborted` | RAID partitions are not equal size. Use the same `raidSize` for both disks (step 2). |
 | `syntax error, unexpected end of file` in `hardware-raid.nix` | Missing `}` or `;` after editing. Run `nix-instantiate --parse` on it. |
 | `No space left on device` during install | The ISO's RAM-backed store filled up. `sudo mount -o remount,size=8G /nix/.rw-store`, and `export TMPDIR=/mnt/tmp` (after `sudo mkdir -p /mnt/tmp`). |
 | `ServerRaid` not found | Old checkout. `git pull` and check `git log` shows the `server-raid1` merge. |
@@ -165,6 +170,6 @@ sudo nix --extra-experimental-features 'nix-command flakes' run 'github:nix-comm
   --disk two /dev/disk/by-id/<disk-2>
 ```
 
-You still need equal RAID partition sizes (step 2's `size` change), and it uses
+`disko-install` cannot change `raidSize`, so it uses the default in `disko.nix`. It also uses
 whatever `hardware-raid.nix` is already in the repo, so regenerate that first if
 the hardware changed.

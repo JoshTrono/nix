@@ -2,69 +2,57 @@
 #
 # Both disks get the same layout:
 #   - 1G ESP   (disk "one" -> /boot, disk "two" -> /boot2; GRUB mirroredBoots keeps them in sync)
-#   - the rest as an mdadm RAID 1 member
+#   - raidSize as an mdadm RAID 1 member
 # The two RAID members form /dev/md/root, formatted ext4 and mounted at /.
 #
-# Pick the disks at install time with --disk, or replace the placeholders below
-# with stable /dev/disk/by-id/... paths:
-#   disko-install --flake .#ServerRaid \
-#     --disk one /dev/disk/by-id/<disk-1> --disk two /dev/disk/by-id/<disk-2>
-{ lib, ... }:
+# `disks` and `raidSize` have defaults for the real server, and can be overridden
+# when running disko on this file directly (not with --flake):
+#   disko --mode destroy,format,mount --yes-wipe-all-disks ./nixos/Server/disko.nix \
+#     --arg disks '[ "/dev/vda" "/dev/vdb" ]' --argstr raidSize 15G
+# The RAID partitions must be the same size on both disks (mdadm asks an
+# interactive question otherwise), so raidSize is fixed rather than "100%".
+{
+  lib,
+  disks ? [
+    "/dev/disk/by-id/ata-WDC_WDS250G2B0B_19435B803332"
+    "/dev/disk/by-id/ata-SPCC_Solid_State_Disk_AA000000000000001163"
+  ],
+  raidSize ? "230G",
+  ...
+}:
+let
+  disk = device: espMount: {
+    type = "disk";
+    device = lib.mkDefault device;
+    content = {
+      type = "gpt";
+      partitions = {
+        ESP = {
+          size = "1G";
+          type = "EF00";
+          content = {
+            type = "filesystem";
+            format = "vfat";
+            mountpoint = espMount;
+            mountOptions = [ "umask=0077" ];
+          };
+        };
+        raid = {
+          size = raidSize;
+          content = {
+            type = "mdraid";
+            name = "root";
+          };
+        };
+      };
+    };
+  };
+in
 {
   disko.devices = {
     disk = {
-      one = {
-        type = "disk";
-        device = lib.mkDefault "/dev/disk/by-id/CHANGE-ME-DISK-1";
-        content = {
-          type = "gpt";
-          partitions = {
-            ESP = {
-              size = "1G";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
-              };
-            };
-            raid = {
-              size = "200G";
-              content = {
-                type = "mdraid";
-                name = "root";
-              };
-            };
-          };
-        };
-      };
-      two = {
-        type = "disk";
-        device = lib.mkDefault "/dev/disk/by-id/CHANGE-ME-DISK-2";
-        content = {
-          type = "gpt";
-          partitions = {
-            ESP = {
-              size = "1G";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot2";
-                mountOptions = [ "umask=0077" ];
-              };
-            };
-            raid = {
-              size = "200G";
-              content = {
-                type = "mdraid";
-                name = "root";
-              };
-            };
-          };
-        };
-      };
+      one = disk (builtins.elemAt disks 0) "/boot";
+      two = disk (builtins.elemAt disks 1) "/boot2";
     };
 
     mdadm.root = {

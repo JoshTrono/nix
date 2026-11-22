@@ -167,7 +167,8 @@
             };
 
             # Throwaway VM copy of ServerRaid for testing the RAID 1 install in QEMU/virt-manager.
-            # Two virtio disks (/dev/vda, /dev/vdb), no real hardware config, no /mnt/mainlibrary.
+            # Format with: disko ./nixos/Server/disko.nix --arg disks '[ "/dev/vda" "/dev/vdb" ]' --argstr raidSize 15G
+            # (see nixos/Server/SERVER-INSTALL.md). No real hardware config, no /mnt/mainlibrary.
             ServerRaidVM = inputs.nixpkgs.lib.nixosSystem {
               specialArgs = {
                 inherit inputs;
@@ -178,7 +179,6 @@
                 ./nixos/Server/configuration.nix
                 ./nixos/Server/hardware-vm.nix
                 ./nixos/Server/disko.nix
-                ./nixos/Server/disko-vm.nix
               ];
             };
           };
