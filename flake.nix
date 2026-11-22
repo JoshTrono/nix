@@ -25,9 +25,6 @@
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     import-tree.url = "github:vic/import-tree";
 
-    nix-index-database.url = "github:nix-community/nix-index-database";
-    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
-
     # Declarative disk partitioning (used by the Server RAID 1 install)
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -35,12 +32,21 @@
     # --- Multiverse (Pull Any Published Package) ---
     multiverse.url = "github:fzakaria/nixpkgs-multiverse";
 
+    lanzaboote = {
+      # https://github.com/nix-community/lanzaboote/tags
+      url = "github:nix-community/lanzaboote/v1.2.0";
+      # follows unstable since lanzaboote recommends to run on unstable since it's active development
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
   };
 
   outputs =
     inputs@{
       flake-parts,
       home-manager,
+      lanzaboote,
+
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (
@@ -101,8 +107,29 @@
                 inherit inputs;
                 vars = hosts.Zeus;
               };
+
               modules = [
-                # > Our main nixos configuration file <
+
+                lanzaboote.nixosModules.lanzaboote
+
+                ({ pkgs, lib, ... }: {
+
+                  environment.systemPackages = [
+                    # For debugging and troubleshooting Secure Boot.
+                    pkgs.sbctl
+                  ];
+
+                  # Lanzaboote currently replaces the systemd-boot module.
+                  # This setting is usually set to true in configuration.nix
+                  # generated at installation time. So we force it to false
+                  # for now.
+                  boot.loader.systemd-boot.enable = lib.mkForce false;
+
+                  boot.lanzaboote = {
+                    enable = true;
+                    pkiBundle = "/var/lib/sbctl";
+                  };
+                })
                 ./nixos/Zeus/configuration.nix
               ];
             };

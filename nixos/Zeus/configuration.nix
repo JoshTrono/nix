@@ -23,7 +23,6 @@ in
     nixos.multiverse
     nixos.nixCaches
     nixos.vm
-    nixos.ai
     nixos.netbird
     nixos.netextender
     # Or modules from other flakes (such as nixos-hardware):
@@ -75,8 +74,13 @@ in
     channel.enable = false;
   };
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  networking.networkmanager.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages;
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [
+      networkmanager-openvpn
+    ];
+  };
   networking.networkmanager.wifi.powersave = false;
   swapDevices = [
     {
@@ -84,7 +88,7 @@ in
       size = 32 * 1024; # 32 GiB
     }
   ];
-  
+
   # TODO: Set your hostname
   networking.hostName = "${vars.hostname}";
 

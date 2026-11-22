@@ -11,14 +11,18 @@
     }:
     {
 
-      boot.loader.efi.canTouchEfiVariables = true;
       boot.loader.timeout = 5;
 
-      boot.loader.limine = {
-        enable = true;
-        secureBoot.enable = true;
-      };
-      environment.systemPackages = [ pkgs.sbctl ];
+      # boot.loader.limine = {
+      #   enable = true;
+      #   secureBoot.enable = true;
+      # };
+      boot.loader.limine.enable = false; # or just delete the limine block entirely
+      boot.loader.systemd-boot.enable = true;
+      boot.loader.efi.canTouchEfiVariables = true;
+      environment.systemPackages = [
+        pkgs.sbctl
+      ];
 
       # TPM support: systemd-based initrd is needed for TPM2 LUKS unlock
       security.tpm2.enable = true;

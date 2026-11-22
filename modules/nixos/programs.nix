@@ -8,7 +8,7 @@
       ...
     }:
     {
-      imports = [ inputs.nix-index-database.nixosModules.default ];
+      # imports = [ inputs.nix-index-database.nixosModules.default ];
       # --- Nixpkgs Configuration ---
       nixpkgs.config.permittedInsecurePackages = [
         "electron-39.8.10"

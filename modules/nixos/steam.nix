@@ -3,8 +3,6 @@
     { pkgs, inputs, ... }:
     let
       system = pkgs.stdenv.hostPlatform.system;
-      # nix-packages = inputs.nix-packages.packages.${system};
-      #zen-browser = inputs.zen-browser.packages.${system}.default;
     in
 
     {
@@ -15,9 +13,6 @@
         dedicatedServer.openFirewall = true;
         extraCompatPackages = with pkgs; [
           unstable.proton-ge-bin
-          #         proton-ge-bin nix-packages.proton-ge-w3rt
-          #inputs.nix-proton-cachyos.packages.${pkgs.stdenv.hostPlatform.system}.proton-cachyos
-          #run: nix flake update nix-proton-cachyos, first before uncommenting out the line above.
         ];
       };
 
@@ -26,7 +21,6 @@
         enable = true;
         capSysNice = true;
       };
-      
 
       # --- Gaming: Gamemode ---
       programs.gamemode = {
@@ -44,7 +38,7 @@
       hardware.xpadneo.enable = true;
       environment.systemPackages = with pkgs; [
         prismlauncher
-        (unstable.heroic.override {
+        (heroic.override {
           extraPkgs =
             pkgs': with pkgs'; [
               gamescope
