@@ -165,6 +165,22 @@
                 ./nixos/Server/disko.nix
               ];
             };
+
+            # Throwaway VM copy of ServerRaid for testing the RAID 1 install in QEMU/virt-manager.
+            # Two virtio disks (/dev/vda, /dev/vdb), no real hardware config, no /mnt/mainlibrary.
+            ServerRaidVM = inputs.nixpkgs.lib.nixosSystem {
+              specialArgs = {
+                inherit inputs;
+                vars = hosts.ServerRaidVM;
+              };
+              modules = [
+                inputs.disko.nixosModules.disko
+                ./nixos/Server/configuration.nix
+                ./nixos/Server/hardware-vm.nix
+                ./nixos/Server/disko.nix
+                ./nixos/Server/disko-vm.nix
+              ];
+            };
           };
 
           # Standalone home-manager configuration entrypoint
