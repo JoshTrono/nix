@@ -117,7 +117,9 @@ in
 
   system.autoUpgrade = {
     enable = true;
-    flake = "github:joshtrono/nix#${vars.flakeAttr or vars.hostname}";
+    # Follows vars.deployRef (variables.nix). Use a protected branch you merge
+    # into on purpose: whoever can push there gets root on this machine.
+    flake = "github:joshtrono/nix/${vars.deployRef}#${vars.flakeAttr or vars.hostname}";
     flags = [ "--print-build-logs" ];
     dates = "02:00";
     randomizedDelaySec = "45min";

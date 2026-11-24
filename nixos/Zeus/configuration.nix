@@ -125,16 +125,10 @@ in
       cups-browsed
     ];
   };
-  system.autoUpgrade = {
-    enable = true;
-    flake = "/home/${vars.username}/.dotfiles";
-    flags = [
-      "--print-build-logs"
-      "--commit-lock-file" # If you want to automatically commit the updated flake.lock
-    ];
-    dates = "02:00";
-    randomizedDelaySec = "45min";
-  };
+  # No system.autoUpgrade here on purpose: it would run as root from
+  # ~/.dotfiles, a directory this user can write to, so anything running as the
+  # user could edit the config and get root at the next upgrade. Update by hand
+  # with `nh os switch` (the flake path is set in modules/nixos/nh.nix).
   programs.bash.interactiveShellInit = ''
     [ -f "$HOME/.config/work-aliases.sh" ] && . "$HOME/.config/work-aliases.sh"
   '';
