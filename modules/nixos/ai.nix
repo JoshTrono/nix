@@ -8,6 +8,17 @@
     }:
     {
       imports = [ inputs.nix-amd-ai.nixosModules.default ];
+
+      # Third-party cache, trusted only where this module is used. (It used to
+      # be in nix-caches.nix, which trusted it on every host. Note that
+      # nix-amd-ai is not currently declared in flake.nix's inputs.)
+      nix.settings = {
+        substituters = [ "https://nix-amd-ai.cachix.org" ];
+        trusted-public-keys = [
+          "nix-amd-ai.cachix.org-1:F4OU4vw/lV2oiG6SBHZ+nqjl4EFJuqI4X9A7pvaBmhQ="
+        ];
+      };
+
       environment.systemPackages = with pkgs; [
         opencode
       ];

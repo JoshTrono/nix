@@ -1,6 +1,6 @@
 { inputs, ... }: # <- flake-parts args, add this
 {
-  flake.modules.nixos.netbird = { pkgs, vars, ... }: {
+  flake.modules.nixos.netbird = { lib, pkgs, vars, ... }: {
 
     # Replace the stable netbird module with the one from unstable
     # disabledModules = [ "services/networking/netbird.nix" ];
@@ -25,7 +25,10 @@
         openInternalFirewall = true;
       };
     };
-    services.netbird.useRoutingFeatures = "both";
+    # Only a host that routes traffic for other peers needs "server"/"both"
+    # (IP forwarding); everything else stays a plain client. The Server sets
+    # "both" itself in nixos/Server/configuration.nix.
+    services.netbird.useRoutingFeatures = lib.mkDefault "client";
 
     # Lets the main user talk to the client (`netbird status`, the UI).
     users.users.${vars.username}.extraGroups = [ "netbird-wt0" ];
