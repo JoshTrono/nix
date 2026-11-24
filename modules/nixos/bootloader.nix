@@ -1,5 +1,6 @@
-# /.dotfiles/modules/bootloader.nix
-# Lanzaboote (Secure Boot on systemd-boot) + Plymouth.
+# modules/nixos/bootloader.nix
+# Plymouth splash, quiet boot and TPM2 support. Secure Boot (Lanzaboote) for
+# Zeus is wired up in flake.nix, which also forces systemd-boot off.
 { inputs, ... }:
 {
   flake.modules.nixos.bootloader =

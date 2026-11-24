@@ -1,4 +1,4 @@
-# /.dotfiles/modules/immich.nix
+# modules/nixos/server/immich.nix
 { inputs, ... }:
 {
   flake.modules.nixos.immich =
