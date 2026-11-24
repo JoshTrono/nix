@@ -94,13 +94,16 @@ nixos-generate-config --root /mnt --no-filesystems --show-hardware-config \
 
 Check it parses: `nix-instantiate --parse nixos/Server/hardware-raid.nix >/dev/null && echo ok`
 
-## 5. (Optional) Re-add the main library disk
+## 5. The main library disk
 
-Skip this section if you do not have the data disk attached, or want to add it
-later.
+`/mnt/mainlibrary` is declared in `modules/nixos/server/mainlibrary.nix` and
+imported by the `ServerRaid` output, so regenerating `hardware-raid.nix` in
+step 4 does not touch it.
 
 Immich stores its media in `/mnt/mainlibrary/immich`
-(`modules/nixos/server/immich.nix`), so Immich expects this mount to exist.
+(`modules/nixos/server/immich.nix`), so Immich expects this mount to exist. The
+mount is strict: if the disk is missing at boot, the machine drops to emergency
+mode.
 
 1. Make sure the data array is assembled and find its filesystem UUID:
 
@@ -109,27 +112,12 @@ Immich stores its media in `/mnt/mainlibrary/immich`
    sudo blkid                       # find the ext4 entry for the data array (not the new RAID 1 disks)
    ```
 
-2. Add this block to `nixos/Server/hardware-raid.nix`, inside the outer `{ ... }`,
-   for example right after `boot.extraModulePackages = [ ];`:
+2. Compare it with the UUID in `modules/nixos/server/mainlibrary.nix`
+   (`0d77e4fd-206d-48b3-a653-62e552f80198`, from the previous install). If
+   `blkid` shows a different one, edit that file.
 
-   ```nix
-   fileSystems."/mnt/mainlibrary" = {
-     device = "/dev/disk/by-uuid/<uuid-from-blkid>";
-     fsType = "ext4";
-   };
-   ```
-
-   The previous install used `0d77e4fd-206d-48b3-a653-62e552f80198`. Use it only
-   if `blkid` shows the same UUID.
-
-3. Re-check syntax:
-
-   ```bash
-   nix-instantiate --parse nixos/Server/hardware-raid.nix >/dev/null && echo ok
-   ```
-
-To add it after install instead, put the same block in the file on the server
-and run `sudo nixos-rebuild switch --flake .#ServerRaid`.
+3. No data disk attached? Remove `self.modules.nixos.mainlibrary` from the
+   `ServerRaid` modules in `flake.nix` before installing, and add it back later.
 
 ## 6. Install
 

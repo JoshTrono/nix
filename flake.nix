@@ -160,6 +160,7 @@
                 ./nixos/Server/configuration.nix
                 ./nixos/Server/hardware-raid.nix
                 ./nixos/Server/disko.nix
+                self.modules.nixos.mainlibrary
               ];
             };
 
