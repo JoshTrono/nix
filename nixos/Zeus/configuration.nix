@@ -133,6 +133,11 @@ in
       PasswordAuthentication = false;
     };
   };
+
+  environment.shellAliases = {
+    r = "rider . &";
+  };
+
   # Printing
   services.avahi = {
     enable = true;

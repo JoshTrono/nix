@@ -46,8 +46,12 @@
     config = {
       # Disable if you don't want unfree packages
       allowUnfree = true;
+      permittedInsecurePackages = [
+        "rider-2026.2.4"
+      ];
     };
   };
+
   programs.mangohud = {
     enable = true;
     enableSessionWide = true; # load into every Vulkan/OpenGL app, no wrapper needed
