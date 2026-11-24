@@ -21,6 +21,7 @@ in
     nixos.forgejo
     nixos.nixCaches
     nixos.jellyfin
+    nixos.serverFirewall
     nixos.users
     nixos.ssh
     # Or modules from other flakes (such as nixos-hardware):
