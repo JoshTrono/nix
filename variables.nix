@@ -4,7 +4,10 @@ let
   # Paste yours here, e.g. "ssh-ed25519 AAAA... you@host".
   # While this list is empty the Server still accepts SSH password logins (and
   # the build prints a warning); once it has a key, password logins turn off.
-  sshKeys = [ ];
+  sshKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIX5wsuRPq3jfTXqe71U8rPTX6YvNQK/HOfihLUML7zS joshua@Zeus
+    "
+  ];
 
   # Branch the Server's nightly auto-upgrade follows. Point this at a protected
   # branch (e.g. "deploy") that you merge into on purpose, instead of master.
