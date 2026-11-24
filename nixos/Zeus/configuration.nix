@@ -15,6 +15,7 @@ in
   # You can import other NixOS modules here
   imports = [
     # Modules exported by your own flake (from modules/)
+    nixos.base
     nixos.nh
     nixos.de
     nixos.bootloader
@@ -38,47 +39,7 @@ in
     ./hardware-configuration.nix
   ];
 
-  nixpkgs = {
-    # You can add overlays here
-    overlays = [
-      # Add overlays your own flake exports (from overlays and pkgs dir):
-      inputs.self.overlays.additions
-      inputs.self.overlays.modifications
-      inputs.self.overlays.unstable-packages
-
-      # You can also add overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
-    ];
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-    };
-  };
-  nix = {
-    settings = {
-      # Enable flakes and new 'nix' command
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      # Opinionated: disable global registry
-      flake-registry = "";
-    };
-    # Opinionated: disable channels
-    channel.enable = false;
-  };
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages;
   networking.networkmanager = {
-    enable = true;
     plugins = with pkgs; [
       networkmanager-openvpn
     ];
@@ -91,16 +52,11 @@ in
     }
   ];
 
-  # TODO: Set your hostname
-  networking.hostName = "${vars.hostname}";
-
   nix.registry.dots.to = {
     type = "github";
     owner = "joshtrono";
     repo = "nix-templates";
   };
-
-  time.timeZone = "America/New_York";
 
   services.netbird.ui.enable = true;
 

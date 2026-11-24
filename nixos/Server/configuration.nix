@@ -15,6 +15,7 @@ in
   # You can import other NixOS modules here
   imports = [
     # Modules exported by your own flake (from modules/)
+    nixos.base
     nixos.nh
     nixos.immich
     nixos.netbird
@@ -36,31 +37,6 @@ in
     #   ServerRaid -> ./hardware-raid.nix + ./disko.nix (RAID 1 install)
   ];
 
-  nixpkgs = {
-    # You can add overlays here
-    overlays = [
-      # Add overlays your own flake exports (from overlays and pkgs dir):
-      inputs.self.overlays.additions
-      inputs.self.overlays.modifications
-      inputs.self.overlays.unstable-packages
-
-      # You can also add overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
-    ];
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-    };
-  };
-
   boot.swraid.mdadmConf = ''
     MAILADDR root
   '';
@@ -72,17 +48,6 @@ in
   programs.git = {
     enable = true;
     config.safe.directory = [ "/home/${vars.username}/.dotfiles" ];
-  };
-
-  nix = {
-    settings = {
-      # Enable flakes and new 'nix' command
-      experimental-features = "nix-command flakes";
-      # Opinionated: disable global registry
-      flake-registry = "";
-    };
-    # Opinionated: disable channels
-    channel.enable = false;
   };
 
   boot.loader.systemd-boot.enable = false;
@@ -102,15 +67,6 @@ in
       }
     ];
   };
-
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages;
-  networking.networkmanager.enable = true;
-
-  # TODO: Set your hostname
-  networking.hostName = "${vars.hostname}";
-
-  time.timeZone = "America/New_York";
 
   users.users.${vars.username}.linger = true;
   services.netbird.useRoutingFeatures = "both";
