@@ -1,4 +1,4 @@
-# /.dotfiles/modules/multiverse.nix
+# modules/nixos/multiverse.nix
 
 # NOTE: nixpkgs-multiverse itself has `inputs = { }` — it fetches revisions
 # lazily via builtins.fetchTree, so adding it does not pull in a second

@@ -10,7 +10,8 @@
       programs.steam = {
         enable = true;
         remotePlay.openFirewall = true;
-        dedicatedServer.openFirewall = true;
+        # Only needed when hosting a game server from this machine.
+        dedicatedServer.openFirewall = false;
         extraCompatPackages = with pkgs; [
           unstable.proton-ge-bin
         ];

@@ -14,11 +14,8 @@
   boot.extraModulePackages = [ ];
 
   # / , /boot and /boot2 come from ./disko.nix (RAID 1).
-  # /mnt/mainlibrary is a separate data disk and is kept as-is.
-  fileSystems."/mnt/mainlibrary" =
-    { device = "/dev/disk/by-uuid/0d77e4fd-206d-48b3-a653-62e552f80198";
-      fsType = "ext4";
-    };
+  # /mnt/mainlibrary (the separate data disk) is declared in
+  # modules/nixos/server/mainlibrary.nix, so regenerating this file never drops it.
 
   swapDevices = [ ];
 

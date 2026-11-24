@@ -15,12 +15,16 @@ in
   # You can import other NixOS modules here
   imports = [
     # Modules exported by your own flake (from modules/)
+    nixos.base
     nixos.nh
     nixos.immich
     nixos.netbird
     nixos.forgejo
     nixos.nixCaches
     nixos.jellyfin
+    nixos.serverFirewall
+    nixos.users
+    nixos.ssh
     # Or modules from other flakes (such as nixos-hardware):
     inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
@@ -33,31 +37,6 @@ in
     #   ServerRaid -> ./hardware-raid.nix + ./disko.nix (RAID 1 install)
   ];
 
-  nixpkgs = {
-    # You can add overlays here
-    overlays = [
-      # Add overlays your own flake exports (from overlays and pkgs dir):
-      inputs.self.overlays.additions
-      inputs.self.overlays.modifications
-      inputs.self.overlays.unstable-packages
-
-      # You can also add overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
-    ];
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-    };
-  };
-
   boot.swraid.mdadmConf = ''
     MAILADDR root
   '';
@@ -69,17 +48,6 @@ in
   programs.git = {
     enable = true;
     config.safe.directory = [ "/home/${vars.username}/.dotfiles" ];
-  };
-
-  nix = {
-    settings = {
-      # Enable flakes and new 'nix' command
-      experimental-features = "nix-command flakes";
-      # Opinionated: disable global registry
-      flake-registry = "";
-    };
-    # Opinionated: disable channels
-    channel.enable = false;
   };
 
   boot.loader.systemd-boot.enable = false;
@@ -100,54 +68,14 @@ in
     ];
   };
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages;
-  networking.networkmanager.enable = true;
-
-  # TODO: Set your hostname
-  networking.hostName = "${vars.hostname}";
-
-  time.timeZone = "America/New_York";
-
-  # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
-  users.users = {
-    # FIXME: Replace with your username
-    "${vars.username}" = {
-      # TODO: You can set an initial password for your user.
-      # If you do, you can skip setting a root password by passing '--no-root-passwd' to nixos-install.
-      # Be sure to change it (using passwd) after rebooting!
-      initialPassword = "correcthorsebatterystaple";
-      isNormalUser = true;
-      linger = true;
-      openssh.authorizedKeys.keys = [
-        # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
-      ];
-      # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "netbird-wt0"
-      ];
-    };
-  };
+  users.users.${vars.username}.linger = true;
   services.netbird.useRoutingFeatures = "both";
-
-  # This setups a SSH server. Very important if you're setting up a headless system.
-  # Feel free to remove if you don't need it.
-  services.openssh = {
-    enable = true;
-    settings = {
-      # Opinionated: forbid root login through SSH.
-      PermitRootLogin = "no";
-      # Opinionated: use keys only.
-      # Remove if you want to SSH using passwords
-      PasswordAuthentication = true;
-    };
-  };
 
   system.autoUpgrade = {
     enable = true;
-    flake = "github:joshtrono/nix#${vars.flakeAttr or vars.hostname}";
+    # Follows vars.deployRef (variables.nix). Use a protected branch you merge
+    # into on purpose: whoever can push there gets root on this machine.
+    flake = "github:joshtrono/nix/${vars.deployRef}#${vars.flakeAttr or vars.hostname}";
     flags = [ "--print-build-logs" ];
     dates = "02:00";
     randomizedDelaySec = "45min";

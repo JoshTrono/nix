@@ -21,16 +21,8 @@ let
   importedLists = [ ];
 in
 {
-  # ---------------------------------------------------------------------------
-  # Basics: change these to match your system
-  # ---------------------------------------------------------------------------
-  home.username = "${vars.username}";
-  home.homeDirectory = "/home/${vars.username}";
-
-  # Set this to the release you first installed home-manager with, then leave it.
-  home.stateVersion = "26.05";
-
-  programs.home-manager.enable = true;
+  # (username, home directory, stateVersion and home-manager itself are set in
+  # home.nix, which imports this file.)
 
   # ---------------------------------------------------------------------------
   # Firefox

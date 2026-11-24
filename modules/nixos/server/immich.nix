@@ -1,4 +1,4 @@
-# /.dotfiles/modules/immich.nix
+# modules/nixos/server/immich.nix
 { inputs, ... }:
 {
   flake.modules.nixos.immich =
@@ -18,7 +18,8 @@
         package = stable.immich;
         port = 2283;
         host = "0.0.0.0";
-        openFirewall = true;
+        # The port is opened on the Netbird interface only (see firewall.nix).
+        openFirewall = false;
         mediaLocation = "/mnt/mainlibrary/immich";
       };
     };

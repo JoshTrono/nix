@@ -1,7 +1,5 @@
-# /.dotfiles/modules/vm.nix
-# Virtual machines: libvirt + virt-manager, and VM Curator (drives QEMU
-# directly, no libvirt), with UEFI firmware where VM Curator can find it and
-# optional single-GPU passthrough (custom.vm.gpuPassthrough, off by default).
+# modules/nixos/vm.nix
+# Virtual machines (libvirt + virt-manager with a software TPM) and Docker.
 {
   flake.modules.nixos.vm =
     {

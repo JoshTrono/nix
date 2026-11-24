@@ -1,6 +1,5 @@
-# Put this at modules/nixos/netextender.nix (the file your flake already loads),
-# and move the derivation to pkgs/netextender.nix. Adjust the relative path
-# below if your layout differs.
+# SonicWall NetExtender: installs the package from pkgs/netextender.nix and runs
+# the vendor NEService daemon (as root, outside the Nix sandboxing options).
 {
   flake.modules.nixos.netextender = { pkgs, ... }:
     let
