@@ -135,6 +135,9 @@ and run `sudo nixos-rebuild switch --flake .#ServerRaid`.
 
 ```bash
 sudo nixos-install --flake .#ServerRaid --no-root-passwd
+# The config sets no password for your user (the repo is public), so set one
+# before rebooting or you cannot log in:
+sudo nixos-enter --root /mnt -c 'passwd joshua'
 sudo reboot
 ```
 
@@ -144,6 +147,10 @@ GRUB is installed to both ESPs (`mirroredBoots` in
 ## 7. After the first boot
 
 - Check the array: `cat /proc/mdstat` (should show `[UU]`).
+- Add your SSH public key to `sshKeys` in `variables.nix`, commit, and rebuild.
+  Until a key is listed the server still accepts SSH password logins and the
+  build prints a warning; once a key is there, password logins turn off. Test
+  the key from a second terminal before closing your first session.
 - Commit `nixos/Server/hardware-raid.nix` back to GitHub so the repo matches the
   machine. Nightly auto-upgrade follows
   `github:joshtrono/nix#ServerRaid`.

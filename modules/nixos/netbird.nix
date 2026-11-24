@@ -27,6 +27,9 @@
     };
     services.netbird.useRoutingFeatures = "both";
 
+    # Lets the main user talk to the client (`netbird status`, the UI).
+    users.users.${vars.username}.extraGroups = [ "netbird-wt0" ];
+
     services.resolved.enable = true;
   };
 }
