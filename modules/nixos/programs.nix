@@ -8,11 +8,7 @@
       ...
     }:
     {
-      # imports = [ inputs.nix-index-database.nixosModules.default ];
-      # --- Nixpkgs Configuration ---
-      nixpkgs.config.permittedInsecurePackages = [
-        "electron-39.8.10"
-      ];
+
 
       environment.systemPackages = with pkgs; [
         vscodium
@@ -42,13 +38,6 @@
       programs.obs-studio = {
         enableVirtualCamera = true;
         enable = true;
-
-        # optional Nvidia hardware acceleration
-        package = (
-          pkgs.obs-studio.override {
-            cudaSupport = true;
-          }
-        );
 
         plugins = with pkgs.obs-studio-plugins; [
           wlrobs

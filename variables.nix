@@ -5,7 +5,7 @@ let
   # While this list is empty the Server still accepts SSH password logins (and
   # the build prints a warning); once it has a key, password logins turn off.
   sshKeys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIX5wsuRPq3jfTXqe71U8rPTX6YvNQK/HOfihLUML7zS joshua@Zeus"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIB51eO07/V8v2NwlOmWDiSwqdBnFaNuTKHoGb2x6748 joshua@Zeus"
 
   ];
 

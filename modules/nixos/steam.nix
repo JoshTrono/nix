@@ -39,6 +39,7 @@
       hardware.xpadneo.enable = true;
       environment.systemPackages = with pkgs; [
         prismlauncher
+        epic-games-launcher
         (unstable.heroic.override {
           extraPkgs =
             pkgs': with pkgs'; [
